@@ -1,6 +1,8 @@
 import "./globals.css";
 import type { Metadata } from "next";
 import { Vazirmatn } from "next/font/google";
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 const vazir = Vazirmatn({
   subsets: ["arabic"],

@@ -27,10 +27,12 @@
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
-    "eslint": "^9",
+    "eslint": "^8.57.0",
     "eslint-config-next": "15.5.15",
+    "opennextjs-cloudflare": "^1.0.0",
     "tailwindcss": "^4",
-    "typescript": "^5",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3",
     "wrangler": "^4.87.0"
   }
 }

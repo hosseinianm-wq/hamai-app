@@ -1,0 +1,74 @@
+// features/chat/services/bale.client.ts
+
+import type {
+  BaleUpdate,
+  BaleChat,
+} from "./bale.server";
+
+class BaleClientService {
+  private async apiRequest<T>(
+    action: string,
+    payload: Record<string, any> = {}
+  ): Promise<T> {
+    const response = await fetch("/api/bale", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        action,
+        payload,
+      }),
+      cache: "no-store",
+    });
+
+    const data = await response.json();
+
+    if (!response.ok || !data.success) {
+      throw new Error(
+        data.error || "Bale client request failed"
+      );
+    }
+
+    return data;
+  }
+
+  async getUpdates(limit = 20): Promise<BaleUpdate[]> {
+    const result = await this.apiRequest<{
+      updates: BaleUpdate[];
+    }>("getUpdates", { limit });
+
+    return result.updates;
+  }
+
+  async sendMessage(
+    chatId: number,
+    text: string,
+    replyTo?: number
+  ) {
+    const result = await this.apiRequest<any>(
+      "sendMessage",
+      {
+        chatId,
+        text,
+        replyTo,
+      }
+    );
+
+    return result.message;
+  }
+
+  async getChat(chatId: number): Promise<BaleChat> {
+    const result = await this.apiRequest<{
+      chat: BaleChat;
+    }>("getChat", { chatId });
+
+    return result.chat;
+  }
+}
+
+export const baleClientService =
+  new BaleClientService();
+
+export default baleClientService;
+```

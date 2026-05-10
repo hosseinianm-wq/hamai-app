@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server";
-
-export const runtime = "edge";
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 const SYSTEM_PROMPT = `
 تو HamAI هستی، یک دستیار هوش مصنوعی فارسی‌زبان حرفه‌ای، دقیق و دوستانه.

@@ -17,16 +17,23 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
+
+    "baseUrl": ".",
+
+    "paths": {
+      "@/*": [
+        "./*"
+      ],
+      "@voice/*": [
+        "features/voice/*"
+      ]
+    },
+
     "plugins": [
       {
         "name": "next"
       }
-    ],
-    "paths": {
-      "@/*": [
-        "./*"
-      ]
-    }
+    ]
   },
   "include": [
     "next-env.d.ts",
