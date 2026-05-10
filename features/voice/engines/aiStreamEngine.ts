@@ -1,38 +1,35 @@
 // features/voice/engines/aiStreamEngine.ts
-import voiceEvents from "../events/voiceEvents";
-import interruptEngine from "./interruptEngine";
 
-// pseudo request simulation
-async function fakeStream(text: string, cb: (t: string) => void) {
-  const tokens = text.split(" ");
-  for (const t of tokens) {
-    if (interruptEngine.isActive()) return;
-    cb(t + " ");
-    await new Promise(res => setTimeout(res, 120));
-  }
-}
+import voiceEvents from "../events/voiceEvents";
 
 class AIStreamEngine {
-  streaming = false;
 
-  async stream(text: string) {
-    this.streaming = true;
+  constructor() {
 
-    await fakeStream(text, (token) => {
-      voiceEvents.emit("AI_TOKEN", token);
+    voiceEvents.on("STT_RESULT", async (text) => {
+
+      console.log("[AI] received:", text);
+
+      const tokens = text.split(" ");
+
+      for (const token of tokens) {
+
+        voiceEvents.emit("AI_TOKEN", token + " ");
+
+        await new Promise((r) => setTimeout(r, 120));
+
+      }
+
+      voiceEvents.emit("AI_DONE", { duration: 200 });
+
     });
 
-    if (!interruptEngine.isActive()) {
-      voiceEvents.emit("AI_DONE");
-    }
+    console.log("[aiStreamEngine] initialized");
 
-    this.streaming = false;
   }
 
-  cancel() {
-    interruptEngine.interrupt();
-  }
 }
 
 const aiStreamEngine = new AIStreamEngine();
+
 export default aiStreamEngine;

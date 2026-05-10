@@ -1,67 +1,45 @@
-import voiceEvents from "@voice/events/voiceEvents"
-import interruptEngine from "./interruptEngine"
+import { voiceEvents } from "../../../core/events/voiceEvents";
 
-class SpeechBuffer {
 
-  private buffer = ""
+let buffer = "";
 
-  constructor() {
+console.log("[SpeechBuffer] initialized");
 
-    console.log("[SpeechBuffer] initialized")
+voiceEvents.on("AI_TOKEN", (token: string) => {
+  buffer += token;
 
-    voiceEvents.on("AI_TOKEN", (token: string) => {
+  // تمیز کردن فاصله‌ها
+  buffer = buffer
+    .replace(/\s+/g, " ")
+    .replace(" ،", "،")
+    .replace(" .", ".")
+    .replace(" ؟", "؟");
 
-      console.log("[SpeechBuffer] token:", token)
+  const sentenceRegex = /(.+?[.!؟])/g;
 
-      this.push(token)
+  let match;
 
-    })
+  while ((match = sentenceRegex.exec(buffer)) !== null) {
+    const sentence = match[1].trim();
 
-    voiceEvents.on("INTERRUPT", () => {
+    console.log("[SpeechBuffer] sentence:", sentence);
 
-      console.log("[SpeechBuffer] interrupt")
-
-      this.clear()
-
-    })
-
+    voiceEvents.emit("TTS_SPEAK", sentence);
   }
 
-  push(token: string) {
+  // حذف جمله‌های پردازش شده از buffer
+  const lastMatch = buffer.match(/(.+?[.!؟])/g);
 
-    if (interruptEngine.isActive()) return
-
-    this.buffer += token
-
-    console.log("[BUFFER]", this.buffer)
-
-    // flush if sentence finished OR buffer too long
-    if (/[.!?؟]/.test(token) || this.buffer.length > 80) {
-      this.flush()
-    }
-
+  if (lastMatch) {
+    const lastSentence = lastMatch[lastMatch.length - 1];
+    const index = buffer.lastIndexOf(lastSentence) + lastSentence.length;
+    buffer = buffer.slice(index);
   }
+});
 
-  flush() {
+// برای interrupt
+voiceEvents.on("CLEAR_BUFFER", () => {
+  buffer = "";
+  console.log("[SpeechBuffer] cleared");
+});
 
-    const chunk = this.buffer.trim()
-
-    if (!chunk) return
-
-    console.log("[SPEECH CHUNK]", chunk)
-
-    voiceEvents.emit("SPEECH_CHUNK", chunk)
-
-    this.buffer = ""
-
-  }
-
-  clear() {
-    this.buffer = ""
-  }
-
-}
-
-const speechBuffer = new SpeechBuffer()
-
-export default speechBuffer

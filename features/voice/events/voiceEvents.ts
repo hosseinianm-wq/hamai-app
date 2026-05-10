@@ -1,46 +1,48 @@
-type EventName =
-  | "WAKE"
-  | "VOICE_TEXT"
-  | "INTENT"
-  | "AI_TOKEN"
-  | "AI_DONE"
-  | "SPEECH_CHUNK"
-  | "SPEECH_START"
-  | "SPEECH_END"
-  | "CHAT_MESSAGE"
-  | "INTERRUPT"
-  | "MODE_CHANGED";
+// تعریف دقیق ساختار دیتا برای هر رویداد
+export interface EventPayloads {
+  WAKE: { power: number };
+  VOICE_TEXT: string;
+  INTENT: { action: string; confidence: number };
+  AI_TOKEN: string;
+  AI_DONE: { duration: number };
+  SPEECH_CHUNK: Uint8Array;
+  SPEECH_START: void;
+  SPEECH_END: void;
+  CHAT_MESSAGE: { role: "user" | "assistant"; content: string };
+  INTERRUPT: void;
+  MODE_CHANGED: "voice" | "text" | "idle";
+  STT_RESULT: string; // اضافه شده برای هماهنگی با فایل تست شما
+}
 
-type Listener = (payload?: any) => void;
+type EventName = keyof EventPayloads;
+type Listener<K extends EventName> = (payload: EventPayloads[K]) => void;
 
 class VoiceEventBus {
+  // استفاده از Map برای ذخیره Listenerها با رعایت تایپ
+  private listeners: { [K in EventName]?: Set<Listener<K>> } = {};
 
-  private listeners: Map<EventName, Set<Listener>> = new Map();
-
-  on(event: EventName, fn: Listener) {
-
-    if (!this.listeners.has(event)) {
-      this.listeners.set(event, new Set());
+  on<K extends EventName>(event: K, fn: Listener<K>) {
+    if (!this.listeners[event]) {
+      this.listeners[event] = new Set();
     }
+    (this.listeners[event] as Set<Listener<K>>).add(fn);
 
-    this.listeners.get(event)!.add(fn);
-
+    // بازگرداندن تابع Unsubscribe
     return () => this.off(event, fn);
   }
 
-  off(event: EventName, fn: Listener) {
-    this.listeners.get(event)?.delete(fn);
+  off<K extends EventName>(event: K, fn: Listener<K>) {
+    this.listeners[event]?.delete(fn);
   }
 
-  emit(event: EventName, payload?: any) {
-    this.listeners.get(event)?.forEach((fn) => fn(payload));
+  emit<K extends EventName>(event: K, payload: EventPayloads[K]) {
+    this.listeners[event]?.forEach((fn) => fn(payload));
   }
-
 }
 
-console.log("[voiceEvents] singleton loaded")
+console.log("[voiceEvents] singleton loaded");
 
-const voiceEvents = new VoiceEventBus()
+const voiceEvents = new VoiceEventBus();
 
-export default voiceEvents
-export type { EventName }
+export default voiceEvents;
+export type { EventName };

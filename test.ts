@@ -1,25 +1,15 @@
-import voiceEvents from "@voice/events/voiceEvents"
+import "./features/voice/engines/aiStreamEngine";
+import "./features/voice/engines/ttsEngine";
+import "./features/voice/engines/audioOutputEngine";
 
-import { VoiceStateMachine } from "./core/runtime/VoiceStateMachine"
-import { VoiceOrchestrator } from "./core/runtime/VoiceOrchestrator"
+import voiceEvents from "./features/voice/events/voiceEvents";
 
-import "./features/voice/engines/speechBuffer"
+console.log("------ HamAI Voice System Test ------");
 
-import { MockWakeEngine } from "./core/engines/mock/MockWakeEngine"
-import { MockSpeechEngine } from "./core/engines/mock/MockSpeechEngine"
-import { MockAIEngine } from "./core/engines/mock/MockAIEngine"
-import { MockTTSEngine } from "./core/engines/mock/MockTTSEngine"
+setTimeout(() => {
 
-const state = new VoiceStateMachine()
+  console.log("\n[user] هوا امروز چطوره؟\n");
 
-const orchestrator = new VoiceOrchestrator(
-  voiceEvents,
-  state
-)
+  voiceEvents.emit("STT_RESULT", "امروز هوا خیلی خوب و آفتابی است");
 
-new MockWakeEngine(voiceEvents).start()
-new MockSpeechEngine(voiceEvents)
-new MockAIEngine(voiceEvents)
-new MockTTSEngine(voiceEvents)
-
-orchestrator.start()
+}, 1000);

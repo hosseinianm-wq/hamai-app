@@ -1,28 +1,29 @@
-// features/voice/engines/ttsEngine.ts
 import voiceEvents from "../events/voiceEvents";
-import interruptEngine from "./interruptEngine";
 
 class TTSEngine {
-  private speaking = false;
 
-  speak(text: string) {
-    if (interruptEngine.isActive()) return;
+  constructor() {
 
-    this.speaking = true;
-    voiceEvents.emit("SPEECH_START", text);
+    voiceEvents.on("AI_TOKEN", (token) => {
 
-    console.log("TTS:", text);
+      const chunk = new TextEncoder().encode(token);
 
-    setTimeout(() => {
-      this.speaking = false;
-      voiceEvents.emit("SPEECH_END");
-    }, Math.max(400, text.length * 25));
+      voiceEvents.emit("SPEECH_CHUNK", chunk);
+
+    });
+
+    voiceEvents.on("AI_DONE", () => {
+
+      voiceEvents.emit("SPEECH_END", undefined);
+
+    });
+
+    console.log("[ttsEngine] initialized");
+
   }
 
-  stop() {
-    this.speaking = false;
-  }
 }
 
 const ttsEngine = new TTSEngine();
+
 export default ttsEngine;
