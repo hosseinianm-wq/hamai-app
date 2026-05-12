@@ -1,5 +1,5 @@
 // features/voice/router/intentRouter.ts
-import voiceEvents from "../events/voiceEvents";
+import voiceEvents from "@features/voice/events/voiceEvents";
 
 function detectIntent(text: string) {
   const t = text.toLowerCase();
@@ -11,5 +11,5 @@ function detectIntent(text: string) {
 
 export function routeIntent(text: string) {
   const intent = detectIntent(text);
-  voiceEvents.emit("INTENT", { intent, text });
+voiceEvents.emit("INTENT", { action: intent, confidence: 0.9 });
 }

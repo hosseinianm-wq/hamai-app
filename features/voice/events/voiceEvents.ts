@@ -1,4 +1,4 @@
-// تعریف دقیق ساختار دیتا برای هر رویداد
+// features/voice/events/voiceEvents.ts
 export interface EventPayloads {
   WAKE: { power: number };
   VOICE_TEXT: string;
@@ -11,23 +11,25 @@ export interface EventPayloads {
   CHAT_MESSAGE: { role: "user" | "assistant"; content: string };
   INTERRUPT: void;
   MODE_CHANGED: "voice" | "text" | "idle";
-  STT_RESULT: string; // اضافه شده برای هماهنگی با فایل تست شما
+  STT_RESULT: string;
+  TTS_STOP: void;
+  AI_CANCEL: void;
+  USER_SPEECH_START: void;
+  CLEAR_BUFFER: void;
 }
 
 type EventName = keyof EventPayloads;
 type Listener<K extends EventName> = (payload: EventPayloads[K]) => void;
 
 class VoiceEventBus {
-  // استفاده از Map برای ذخیره Listenerها با رعایت تایپ
-  private listeners: { [K in EventName]?: Set<Listener<K>> } = {};
+  // استفاده از Record برای جلوگیری از ارور generic
+  private listeners: Record<string, Set<any>> = {};
 
   on<K extends EventName>(event: K, fn: Listener<K>) {
     if (!this.listeners[event]) {
       this.listeners[event] = new Set();
     }
-    (this.listeners[event] as Set<Listener<K>>).add(fn);
-
-    // بازگرداندن تابع Unsubscribe
+    this.listeners[event].add(fn);
     return () => this.off(event, fn);
   }
 
@@ -35,14 +37,12 @@ class VoiceEventBus {
     this.listeners[event]?.delete(fn);
   }
 
-  emit<K extends EventName>(event: K, payload: EventPayloads[K]) {
+  emit<K extends EventName>(event: K, payload?: EventPayloads[K]) {
     this.listeners[event]?.forEach((fn) => fn(payload));
   }
 }
 
 console.log("[voiceEvents] singleton loaded");
-
 const voiceEvents = new VoiceEventBus();
-
 export default voiceEvents;
 export type { EventName };

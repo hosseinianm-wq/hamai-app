@@ -1,16 +1,16 @@
-import { voiceEvents } from "../../core/events/voiceEvents";
+import voiceEvents from "@features/voice/events/voiceEvents";
 
 console.log("[InterruptEngine] ready");
 
-voiceEvents.on("USER_SPEECH_START", () => {
-  console.log("[Interrupt] user started speaking");
+// voiceEvents.on("USER_SPEECH_START", () => {
+//   console.log("[Interrupt] user started speaking");
 
-  // stop current speech
-  voiceEvents.emit("TTS_STOP");
+//   // stop current speech
+//   voiceEvents.emit("TTS_STOP");
 
-  // clear AI buffer
-  voiceEvents.emit("CLEAR_BUFFER");
+//   // clear AI buffer
+//   voiceEvents.emit("CLEAR_BUFFER");
 
-  // stop AI streaming
-  voiceEvents.emit("AI_CANCEL");
-});
+//   // stop AI streaming
+//   voiceEvents.emit("AI_CANCEL");
+// });

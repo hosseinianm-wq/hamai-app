@@ -1,4 +1,4 @@
-import { voiceEvents } from "../../../core/events/voiceEvents";
+import voiceEvents from "@features/voice/events/voiceEvents";
 
 const systemPrompt = {
   role: "system",

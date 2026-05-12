@@ -1,12 +1,12 @@
 // features/voice/engines/interruptEngine.ts
-import voiceEvents from "../events/voiceEvents";
+import voiceEvents from "@features/voice/events/voiceEvents";
 
 class InterruptEngine {
   private active = false;
 
   interrupt() {
     this.active = true;
-    voiceEvents.emit("INTERRUPT");
+    voiceEvents.emit("INTERRUPT", undefined);
   }
 
   clear() {

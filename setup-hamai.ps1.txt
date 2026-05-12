@@ -1,0 +1,118 @@
+Write-Host "Initializing HamAI architecture..." -ForegroundColor Cyan
+
+$base = "src"
+
+$folders = @(
+"src/core/engines",
+"src/core/runtime",
+"src/features/voice/events",
+"src/components",
+"src/app/api/chat"
+)
+
+foreach ($folder in $folders) {
+    if (!(Test-Path $folder)) {
+        New-Item -ItemType Directory -Force -Path $folder | Out-Null
+        Write-Host "Created $folder"
+    }
+}
+
+# -------------------------
+# voiceEvents.ts
+# -------------------------
+
+$voiceEvents = @'
+import { EventEmitter } from "events"
+
+export const VOICE_EVENTS = {
+  WAKE_DETECTED: "WAKE_DETECTED",
+  SPEECH_START: "SPEECH_START",
+  SPEECH_END: "SPEECH_END",
+  SPEECH_RECOGNIZED: "SPEECH_RECOGNIZED",
+  AI_RESPONSE: "AI_RESPONSE",
+  TTS_START: "TTS_START",
+  TTS_END: "TTS_END",
+  ERROR: "ERROR"
+} as const
+
+class VoiceEventBus extends EventEmitter {}
+
+export const voiceEvents = new VoiceEventBus()
+'@
+
+Set-Content "src/features/voice/events/voiceEvents.ts" $voiceEvents
+
+# -------------------------
+# VoiceOrchestrator
+# -------------------------
+
+$orchestrator = @'
+import { voiceEvents, VOICE_EVENTS } from "@/features/voice/events/voiceEvents"
+
+export class VoiceOrchestrator {
+
+  constructor() {
+    this.setupListeners()
+  }
+
+  private setupListeners() {
+
+    voiceEvents.on(VOICE_EVENTS.WAKE_DETECTED, () => {
+      console.log("Wake detected")
+      voiceEvents.emit(VOICE_EVENTS.SPEECH_START)
+    })
+
+    voiceEvents.on(VOICE_EVENTS.SPEECH_RECOGNIZED, (text:string) => {
+      console.log("User said:", text)
+      voiceEvents.emit(VOICE_EVENTS.AI_RESPONSE, "Mock AI response to: " + text)
+    })
+
+    voiceEvents.on(VOICE_EVENTS.AI_RESPONSE, (response:string) => {
+      console.log("AI:", response)
+      voiceEvents.emit(VOICE_EVENTS.TTS_START, response)
+    })
+
+  }
+
+}
+'@
+
+Set-Content "src/core/runtime/VoiceOrchestrator.ts" $orchestrator
+
+# -------------------------
+# Mock STT Engine
+# -------------------------
+
+$mockSTT = @'
+import { voiceEvents, VOICE_EVENTS } from "@/features/voice/events/voiceEvents"
+
+export class MockSTTEngine {
+
+  start() {
+
+    setTimeout(() => {
+
+      voiceEvents.emit(
+        VOICE_EVENTS.SPEECH_RECOGNIZED,
+        "Hello HamAI"
+      )
+
+    },2000)
+
+  }
+
+}
+'@
+
+Set-Content "src/core/engines/MockSTTEngine.ts" $mockSTT
+
+# -------------------------
+# Mock AI Engine
+# -------------------------
+
+$mockAI = @'
+export class MockAIEngine {
+
+  async generate(text:string) {
+
+    return "AI response to "

@@ -1,5 +1,5 @@
 // features/voice/engines/wakeWordEngine.ts
-import voiceEvents from "../events/voiceEvents";
+import voiceEvents from "@features/voice/events/voiceEvents";
 import interruptEngine from "./interruptEngine";
 
 class WakeWordEngine {
@@ -19,7 +19,7 @@ class WakeWordEngine {
   fakeTrigger() {
     if (!this.enabled) return;
     interruptEngine.clear();
-    voiceEvents.emit("WAKE");
+    voiceEvents.emit("WAKE", { power: 0.8 });
   }
 }
 

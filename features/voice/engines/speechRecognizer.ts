@@ -1,5 +1,5 @@
 // features/voice/engines/speechRecognizer.ts
-import voiceEvents from "../events/voiceEvents";
+import voiceEvents from "@features/voice/events/voiceEvents";
 import interruptEngine from "./interruptEngine";
 
 class SpeechRecognizer {

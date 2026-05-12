@@ -8,6 +8,6 @@ export const modeRef = {
   },
 };
 
-export function updateMode(next) {
+export function updateMode(next: any) {
   modeRef.current = { ...modeRef.current, ...next };
 }

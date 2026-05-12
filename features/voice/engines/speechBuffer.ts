@@ -1,5 +1,4 @@
-import { voiceEvents } from "../../../core/events/voiceEvents";
-
+import voiceEvents from "@features/voice/events/voiceEvents";
 
 let buffer = "";
 
@@ -24,7 +23,7 @@ voiceEvents.on("AI_TOKEN", (token: string) => {
 
     console.log("[SpeechBuffer] sentence:", sentence);
 
-    voiceEvents.emit("TTS_SPEAK", sentence);
+    voiceEvents.emit("WAKE", { power: 0.8 });
   }
 
   // حذف جمله‌های پردازش شده از buffer
@@ -38,8 +37,8 @@ voiceEvents.on("AI_TOKEN", (token: string) => {
 });
 
 // برای interrupt
-voiceEvents.on("CLEAR_BUFFER", () => {
-  buffer = "";
-  console.log("[SpeechBuffer] cleared");
-});
+//voiceEvents.on("CLEAR_BUFFER", ...)
+  //buffer = "";
+  //console.log("[SpeechBuffer] cleared");
+//});
 

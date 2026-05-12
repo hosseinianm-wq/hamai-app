@@ -1,4 +1,4 @@
-import { voiceEvents } from "../../../core/events/voiceEvents";
+import voiceEvents from "@features/voice/events/voiceEvents";
 
 voiceEvents.on("STT_RESULT", async (text: string) => {
   console.log("[AI] received:", text)
@@ -9,5 +9,5 @@ voiceEvents.on("STT_RESULT", async (text: string) => {
     voiceEvents.emit("AI_TOKEN", char)
   }
 
-  voiceEvents.emit("AI_DONE")
+voiceEvents.emit("AI_DONE", { duration: 0 });
 })
