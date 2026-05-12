@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { X, Mic, Volume2, Pause, Play } from "lucide-react";
+import { useEffect, useState } from "react";
+import { X, Mic, Volume2, Pause, RefreshCw } from "lucide-react";
 import { useDrivingMode } from "../hooks/useDrivingMode";
 
 interface DrivingModeProps {
@@ -10,30 +10,38 @@ interface DrivingModeProps {
 
 export function DrivingMode({ onClose }: DrivingModeProps) {
   const {
-    isActive,
     start,
     stop,
     handleCommand,
     status,
     isSpeaking,
     currentChatIndex,
+    isLoading,
+    connectionStatus,
+    state,
   } = useDrivingMode();
 
   const [isListening, setIsListening] = useState(false);
 
-  // تشخیص گفتار
+  const isActive = state !== "idle";
+
+  // ======================
+  // Voice Recognition
+  // ======================
   const startVoiceRecognition = () => {
     const SpeechRecognition =
       (window as any).SpeechRecognition ||
       (window as any).webkitSpeechRecognition;
+
     if (!SpeechRecognition) {
-      alert("مرورگر شما از تشخیص صدا پشتیبانی نمی‌کند. لطفاً از Chrome استفاده کنید.");
+      alert("مرورگر شما پشتیبانی نمی‌کند");
       return;
     }
 
     setIsListening(true);
+
     const recognition = new SpeechRecognition();
-    recognition.lang = 'fa-IR';
+    recognition.lang = "fa-IR";
     recognition.continuous = false;
     recognition.interimResults = false;
 
@@ -48,81 +56,81 @@ export function DrivingMode({ onClose }: DrivingModeProps) {
     recognition.start();
   };
 
-  // شروع خودکار وقتی کامپوننت لود شد
+  // ======================
+  // Auto Start
+  // ======================
   useEffect(() => {
-    if (!isActive) {
+    if (isActive) return;
+
+    const t = setTimeout(() => {
       start();
-    }
+    }, 0);
+
+    return () => clearTimeout(t);
   }, [isActive, start]);
 
+  const handleRefresh = () => {
+    handleCommand("بروزرسانی");
+  };
+
+  const handleStopSpeaking = () => {
+    window.speechSynthesis.cancel();
+  };
+
   return (
-    <div className="fixed inset-0 bg-zinc-950 z-50 flex flex-col overflow-hidden">
+    <div className="fixed inset-0 bg-zinc-950 z-50 flex flex-col">
+      
       {/* Header */}
-      <div className="flex justify-between items-center p-6 border-b border-white/10 bg-black/50 backdrop-blur-md">
-        <div className="flex items-center gap-3">
-          <div className="w-11 h-11 bg-gradient-to-br from-blue-500 to-cyan-400 rounded-2xl flex items-center justify-center">
-            <Volume2 className="w-6 h-6 text-white" />
-          </div>
+      <div className="flex justify-between p-6 border-b border-white/10">
+        <div className="flex items-center gap-4">
+          <Volume2 className="text-white w-8 h-8" />
           <div>
-            <div className="text-2xl font-bold tracking-tight">HamAI Driving</div>
-            <div className="text-emerald-400 text-sm flex items-center gap-1.5">
-              ● در حال رانندگی
-            </div>
+            <div className="text-2xl text-white font-bold">HamAI</div>
+            <div className="text-sm text-emerald-400">Driving Mode</div>
           </div>
         </div>
 
-        <button
-          onClick={() => {
-            stop();
-            onClose();
-          }}
-          className="p-3 hover:bg-white/10 rounded-xl transition-colors"
-        >
-          <X size={28} />
+        <button onClick={() => { stop(); onClose(); }}>
+          <X className="text-white" />
         </button>
       </div>
 
-      {/* Main Area */}
-      <div className="flex-1 flex flex-col items-center justify-center p-8 text-center relative">
-        <div className="max-w-md w-full">
-          <div className="mb-10">
-            <div className="text-3xl font-semibold min-h-[120px] flex items-center justify-center leading-relaxed">
-              {status}
-            </div>
-          </div>
-
-          {/* Progress Indicator */}
-          <div className="text-sm text-white/60 mb-8">
-            چت {currentChatIndex + 1} از { /* تعداد کل چت‌ها */}
-          </div>
+      {/* Status */}
+      <div className="flex-1 flex items-center justify-center text-center">
+        <div className="text-white text-3xl">
+          {isLoading ? "در حال دریافت..." : status}
         </div>
       </div>
 
-      {/* Bottom Controls */}
-      <div className="p-8 border-t border-white/10 bg-black/60 backdrop-blur-xl">
-        <div className="flex gap-4">
+      {/* Controls */}
+      <div className="p-6 space-y-4">
+
+        <button
+          onClick={startVoiceRecognition}
+          disabled={isListening}
+          className="w-full bg-cyan-500 text-black py-6 rounded-2xl font-bold flex justify-center gap-3"
+        >
+          <Mic />
+          {isListening ? "در حال شنیدن..." : "صحبت کنید"}
+        </button>
+
+        <button
+          onClick={handleRefresh}
+          className="w-full bg-white/10 text-white py-4 rounded-2xl flex justify-center gap-3"
+        >
+          <RefreshCw />
+          بروزرسانی
+        </button>
+
+        {isSpeaking && (
           <button
-            onClick={startVoiceRecognition}
-            disabled={isListening}
-            className="flex-1 bg-white text-black py-6 rounded-3xl text-xl font-bold flex items-center justify-center gap-3 hover:scale-[1.02] active:scale-[0.98] transition-all"
+            onClick={handleStopSpeaking}
+            className="w-full bg-red-600 text-white py-4 rounded-2xl flex justify-center gap-3"
           >
-            <Mic size={28} />
-            {isListening ? "در حال شنیدن..." : "صحبت کن"}
+            <Pause />
+            توقف صدا
           </button>
-
-          {isSpeaking && (
-            <button
-              onClick={() => window.speechSynthesis.cancel()}
-              className="px-8 bg-red-600/90 hover:bg-red-600 py-6 rounded-3xl transition-all"
-            >
-              <Pause size={28} />
-            </button>
-          )}
-        </div>
-
-        <p className="text-center text-xs text-white/50 mt-6">
-          دستورات: بعدی • تکرار • خلاصه • متوقف
-        </p>
+        )}
       </div>
     </div>
   );

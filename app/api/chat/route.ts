@@ -1,8 +1,8 @@
 // app/api/chat/route.ts
 
 import { NextRequest } from "next/server";
-
-export const runtime = "edge";
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
 const MODEL = "llama-3.3-70b-versatile";
