@@ -1,28 +1,19 @@
-import "./globals.css";
 import type { Metadata } from "next";
-import { Vazirmatn } from "next/font/google";
+import "./globals.css";
 
-const vazir = Vazirmatn({
-  subsets: ["arabic"],
-});
 export const metadata: Metadata = {
   title: "HamAI",
-  description: "HamAI Assistant",
-  icons: {
-    icon: "/favicon.ico",
-  },
+  description: "HamAI app",
 };
 
 export default function RootLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode;
-}) {
+}>) {
   return (
-    <html lang="fa">
-      <body className={vazir.className}>
-        {children}
-      </body>
-          </html>
+    <html lang="fa" dir="rtl">
+      <body>{children}</body>
+    </html>
   );
 }
