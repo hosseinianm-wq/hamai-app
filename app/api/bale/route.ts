@@ -1,22 +1,48 @@
-// app/api/bale/route.ts
+import { NextRequest, NextResponse } from "next/server"
 
-import { NextRequest, NextResponse } from "next/server";
-import { getUpdates } from "@/features/bale/baleService";
+import {
+  processBaleMessage,
+  sendBaleMessage,
+  BaleWebhookBody
+} from "@/features/messaging/bale"
 
-export async function GET() {
+export async function POST(req: NextRequest) {
+
   try {
-    const updates = await getUpdates(15); // آخرین ۱۵ آپدیت
 
-    return NextResponse.json({
-      success: true,
-      count: updates.length,
-      updates,
-    });
-  } catch (error: any) {
-    console.error("Bale Error:", error);
+    const body: BaleWebhookBody = await req.json()
+
+    const message = body?.message
+
+    if (!message?.chat?.id || !message?.text) {
+      return NextResponse.json({ ok: true })
+    }
+
+    const chat_id = message.chat.id
+    const text = message.text
+    const user_id = message.from?.id
+
+    console.log("Bale message:", text)
+
+    const reply = await processBaleMessage({
+      chat_id,
+      text,
+    })
+
+    await sendBaleMessage({
+      chat_id,
+      text: reply
+    })
+
+    return NextResponse.json({ ok: true })
+
+  } catch (error) {
+
+    console.error("Webhook error:", error)
+
     return NextResponse.json(
-      { success: false, error: error.message },
+      { ok: false },
       { status: 500 }
-    );
+    )
   }
 }

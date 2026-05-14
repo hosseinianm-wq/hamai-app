@@ -1,7 +1,21 @@
 "use client";
 
+import { sendBaleMessage } from "../../messaging/bale/baleService";
+export async function getUpdates(offset = 0) {
+  const token = process.env.NEXT_PUBLIC_BALE_TOKEN;
+
+  const url =
+    `https://tapi.bale.ai/bot${token}/getUpdates?offset=${offset}`;
+
+  const res = await fetch(url);
+
+  const data = await res.json();
+
+  return data.result || [];
+}
+
 import { useCallback, useRef, useState } from "react";
-import baleClientService from "../services/bale_service";
+import { askHamAI } from "../../../src/core/ai/hamaiClient"
 import { useSpeechManager } from "./useSpeechManager";
 import { streamAI } from "@/features/ai/useStreamingAI";
 
@@ -192,10 +206,11 @@ export function useDrivingMode() {
         let updates = [];
 
         try {
-          updates = await baleClientService.getUpdates(40);
+          updates = await getUpdates(40);
 
           setConnectionStatus("connected");
         } catch (error) {
+
           console.error(error);
 
           setConnectionStatus("error");
