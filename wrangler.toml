@@ -1,4 +1,7 @@
-name = "hamai"
-main = ".open-next/server-functions/default/index.mjs"
+name = "hamai-app"
+main = ".open-next/worker.js"
 compatibility_date = "2026-05-10"
-type = "module"
+compatibility_flags = ["nodejs_compat"]
+
+[build]
+command = "npx opennextjs-cloudflare build"
