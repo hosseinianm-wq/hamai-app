@@ -4,7 +4,6 @@ import { BaleMessage } from "./types"
 
 import { askHamAI } from "../../../src/core/ai/hamaiClient"
 
-
 import {
   addUserMessage,
   addAssistantMessage,
@@ -27,7 +26,16 @@ export async function processBaleMessage(
 
   const text = msg.text.trim()
 
-  const userId = msg.from?.id || msg.chat_id
+  const userId = msg.from?.id
+  const chatId = msg.chat_id
+
+  /*
+   |--------------------------------------------------------------------------
+   | Unique Session ID
+   |--------------------------------------------------------------------------
+   */
+
+  const sessionId = `bale:${chatId}:${userId ?? "anonymous"}`
 
   /*
    |--------------------------------------------------------------------------
@@ -49,7 +57,7 @@ export async function processBaleMessage(
 
   if (text === "/reset") {
 
-    clearConversation(userId)
+    clearConversation(sessionId)
 
     return await resetCommand()
   }
@@ -60,7 +68,7 @@ export async function processBaleMessage(
    |--------------------------------------------------------------------------
    */
 
-  const history = getConversation(userId)
+  const history = getConversation(sessionId)
 
   /*
    |--------------------------------------------------------------------------
@@ -81,9 +89,9 @@ export async function processBaleMessage(
    |--------------------------------------------------------------------------
    */
 
-  addUserMessage(userId, text)
+  addUserMessage(sessionId, text)
 
-  addAssistantMessage(userId, response)
+  addAssistantMessage(sessionId, response)
 
   return response
 }

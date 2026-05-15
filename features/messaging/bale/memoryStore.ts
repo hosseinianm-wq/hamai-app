@@ -1,52 +1,68 @@
 // features/messaging/bale/memoryStore.ts
 
-type Message = {
+export type Message = {
   role: "user" | "assistant"
   content: string
 }
 
-const memory = new Map<number, Message[]>()
+const MAX_HISTORY = 20
+
+const memory = new Map<string, Message[]>()
+
+function trimMessages(messages: Message[]): Message[] {
+  if (messages.length <= MAX_HISTORY) {
+    return messages
+  }
+
+  return messages.slice(-MAX_HISTORY)
+}
 
 export function addUserMessage(
-  userId: number,
+  sessionId: string,
   content: string
 ) {
 
-  const messages = memory.get(userId) || []
+  const messages = memory.get(sessionId) || []
 
   messages.push({
     role: "user",
     content
   })
 
-  memory.set(userId, messages)
+  memory.set(
+    sessionId,
+    trimMessages(messages)
+  )
 }
 
 export function addAssistantMessage(
-  userId: number,
+  sessionId: string,
   content: string
 ) {
 
-  const messages = memory.get(userId) || []
+  const messages = memory.get(sessionId) || []
 
   messages.push({
     role: "assistant",
     content
   })
 
-  memory.set(userId, messages)
+  memory.set(
+    sessionId,
+    trimMessages(messages)
+  )
 }
 
 export function getConversation(
-  userId: number
+  sessionId: string
 ): Message[] {
 
-  return memory.get(userId) || []
+  return memory.get(sessionId) || []
 }
 
 export function clearConversation(
-  userId: number
+  sessionId: string
 ) {
 
-  memory.delete(userId)
+  memory.delete(sessionId)
 }
