@@ -1,3 +1,4 @@
 name = "hamai"
-main = "src/index.ts"
+main = ".open-next/server-functions/default/index.mjs"
 compatibility_date = "2026-05-10"
+type = "module"
