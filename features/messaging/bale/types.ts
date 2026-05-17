@@ -13,13 +13,12 @@ export interface BaleSendMessagePayload {
 
 export interface BaleWebhookBody {
   message?: {
-    message_id: number
-    text?: string
     chat?: {
       id: number
     }
     from?: {
       id: number
     }
+    text?: string
   }
 }

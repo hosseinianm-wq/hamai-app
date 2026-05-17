@@ -1,6 +1,4 @@
-// features/messaging/bale/commands/driveCommand.ts
-
-import { askHamAI } from "../../../../src/core/ai/hamaiClient"
+import { askHamAI } from "@/core/ai/hamaiClient"
 
 export async function driveCommand(
   text: string
@@ -14,11 +12,9 @@ export async function driveCommand(
     return "بعد از /drive پیام خود را بنویس."
   }
 
-  const response = await askHamAI({
-    message: cleanText,
-    drivingMode: true,
-    source: "bale"
-  })
+  const response = await askHamAI([{ role: "user", content: cleanText }])
 
   return response
 }
+
+

@@ -2,7 +2,7 @@
 
 import { BaleMessage } from "./types"
 
-import { askHamAI } from "../../../src/core/ai/hamaiClient"
+import { askHamAI } from "../../../core/ai/hamaiClient"
 
 import {
   addUserMessage,
@@ -76,12 +76,7 @@ export async function processBaleMessage(
    |--------------------------------------------------------------------------
    */
 
-  const response = await askHamAI({
-    message: text,
-    userId,
-    source: "bale",
-    history
-  })
+  const response = await askHamAI([{ role: "user", content: text }])
 
   /*
    |--------------------------------------------------------------------------
@@ -95,3 +90,5 @@ export async function processBaleMessage(
 
   return response
 }
+
+

@@ -15,7 +15,7 @@ export async function getUpdates(offset = 0) {
 }
 
 import { useCallback, useRef, useState } from "react";
-import { askHamAI } from "../../../src/core/ai/hamaiClient"
+import { askHamAI } from "../../../core/ai/hamaiClient"
 import { useSpeechManager } from "./useSpeechManager";
 import { streamAI } from "@/features/ai/useStreamingAI";
 

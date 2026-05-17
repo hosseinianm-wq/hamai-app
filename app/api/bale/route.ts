@@ -1,48 +1,30 @@
-import { NextRequest, NextResponse } from "next/server"
-
-import {
-  processBaleMessage,
-  sendBaleMessage,
-  BaleWebhookBody
-} from "@/features/messaging/bale"
+import { NextRequest, NextResponse } from 'next/server';
+import { sendToBale } from '@/lib/bale/sendToBale';
+import { askHamAIBale } from '@/lib/bale/askHamAI.bale';
+import { normalizeBaleMessage } from '@/lib/bale/normalizeMessage';
+import { getBaleMemory, saveBaleMemory } from '@/lib/bale/memory';
 
 export async function POST(req: NextRequest) {
-
   try {
+    const body = await req.json();
+    const normalized = normalizeBaleMessage(body);
 
-    const body: BaleWebhookBody = await req.json()
+    if (!normalized) return NextResponse.json({ ok: true });
 
-    const message = body?.message
+    const { chatId, messages } = normalized;
+    const history = getBaleMemory(chatId);
+    const fullMessages = [...history, ...messages];
 
-    if (!message?.chat?.id || !message?.text) {
-      return NextResponse.json({ ok: true })
-    }
+    const reply = await askHamAIBale(fullMessages);
 
-    const chat_id = message.chat.id
-    const text = message.text
-    const user_id = message.from?.id
+    const updatedHistory = [...fullMessages, { role: 'assistant' as const, content: reply }];
+    saveBaleMemory(chatId, updatedHistory);
 
-    console.log("Bale message:", text)
+    await sendToBale(chatId, reply);
 
-    const reply = await processBaleMessage({
-      chat_id,
-      text,
-    })
-
-    await sendBaleMessage({
-      chat_id,
-      text: reply
-    })
-
-    return NextResponse.json({ ok: true })
-
-  } catch (error) {
-
-    console.error("Webhook error:", error)
-
-    return NextResponse.json(
-      { ok: false },
-      { status: 500 }
-    )
+    return NextResponse.json({ ok: true });
+  } catch (err) {
+    console.error('Bale error:', err);
+    return NextResponse.json({ ok: true });
   }
 }
