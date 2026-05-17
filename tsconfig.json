@@ -1,50 +1,27 @@
 {
   "compilerOptions": {
-    "ignoreDeprecations": "5.0",
     "target": "ESNext",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "module": "ESNext",
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
+    "forceConsistentCasingInFileNames": true,
     "noEmit": true,
     "esModuleInterop": true,
-    "module": "esnext",
-    "moduleResolution": "bundler",
+    "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
-    "types": [
-      "node"
-    ],
+    "incremental": true,
+    "baseUrl": ".", 
     "paths": {
-      "@/*": [
-        "./*"
-      ],
-      "@features/*": [
-        "./features/*"
-      ],
-      "@components/*": [
-        "./components/*"
-      ]
-    },
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ],
-    "incremental": true
+      "@/*": ["./*"],
+      "@types/*": ["./types/*"],
+      "hamaiClient": ["./lib/hamaiClient"],
+      "@bale/*": ["./features/messaging/bale/*"]
+    }
   },
-  "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
-    ".next/types/**/*.ts"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules"]
 }
