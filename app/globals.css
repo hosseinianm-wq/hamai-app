@@ -1,7 +1,33 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+
+/* ===== COLORS ===== */
+:root {
+  --primary-color: #8e44ad; /* بنفش */
+  --secondary-color: #3498db; /* آبی */
+  --background-dark: rgba(0, 0, 0, 0.3);
+  --bubble-ai-bg: rgba(52, 152, 219, 0.7); /* آبی روشن */
+  --bubble-user-bg: rgba(142, 68, 173, 0.7); /* بنفش روشن */
+  --input-bg: rgba(255, 255, 255, 0.08); /* از CSS جدید */
+  --button-bg: #3ec859; /* سبز */
+  --button-hover-bg: #2ea043; /* سبز تیره‌تر */
+  --text-color: #e8ecf2; /* از CSS جدید */
+  --placeholder-color: rgba(255, 255, 255, 0.7);
+  --border: rgba(255, 255, 255, 0.12); /* از CSS جدید */
+  --panel: rgba(255, 255, 255, 0.03); /* از CSS جدید */
+  --panel-strong: rgba(255, 255, 255, 0.08); /* از CSS جدید */
+  --assistant-msg-border: 1px solid var(--border); /* از CSS جدید */
+}
+
+/* ===== GLOBAL STYLES ===== */
 html, body {
   margin: 0;
   padding: 0;
   height: 100%;
+  font-family: 'Segoe UI', sans-serif; /* فونت از CSS جدید */
+  color: var(--text-color);
+  direction: rtl; /* راست‌چین کردن کل صفحه */
+
+  /* Beautiful Gradient Background from your code */
   background: radial-gradient(
         circle at 50% 20%,
         rgba(57, 94, 255, 0.45) 0%,
@@ -14,41 +40,21 @@ html, body {
   background-size: cover !important;
 }
 
-/* ===== COLORS ===== */
-:root {
-  --panel: rgba(255, 255, 255, 0.03);
-  --panel-strong: rgba(255, 255, 255, 0.08);
-  --text: #e8ecf2;
-  --text-soft: #9ba4b5;
-
-  --user-msg: linear-gradient(135deg, #2c65ff, #1933aa);
-  --assistant-msg: rgba(255, 255, 255, 0.05);
-
-  --border: rgba(255, 255, 255, 0.12);
-  --input-bg: rgba(255, 255, 255, 0.08);
-  --btn: #2ea043;
-  --btn-hover: #3ec859;
-}
-
-body {
-  font-family: 'Segoe UI', sans-serif;
-  color: var(--text);
-  direction: rtl;
-}
-
 /* ===== LAYOUT ===== */
 .chat-root {
   display: flex;
-  height: 100vh;
+  min-height: 100vh; /* استفاده از min-height برای انعطاف‌پذیری */
 }
 
 /* SIDEBAR */
 .chat-sidebar {
   width: 260px;
-  backdrop-filter: blur(20px);
-  background: var(--panel);
-  border-left: 1px solid var(--border);
+  backdrop-filter: blur(20px); /* افکت بلور */
+  background: var(--panel); /* پنل نیمه‌شفاف */
+  border-left: 1px solid var(--border); /* خط جداکننده */
   padding: 22px;
+  display: flex;
+  flex-direction: column;
 }
 
 .sidebar-title {
@@ -56,25 +62,28 @@ body {
   font-weight: bold;
   margin-bottom: 22px;
   opacity: 0.9;
+  text-align: center;
 }
 
 .sidebar-item {
-  background: var(--panel-strong);
+  background: var(--panel-strong); /* آیتم‌های قوی‌تر */
   padding: 14px;
   border-radius: 12px;
   margin-bottom: 12px;
   cursor: pointer;
   transition: 0.2s;
+  font-size: 1.1rem; /* کمی بزرگتر */
 }
 .sidebar-item:hover {
-  background: rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.14); /* هاور */
 }
 
 /* MAIN */
 .chat-shell {
-  flex: 1;
+  flex: 1; /* گرفتن فضای باقی‌مانده */
   display: flex;
   flex-direction: column;
+  overflow: hidden; /* جلوگیری از سرریز */
 }
 
 .chat-header {
@@ -84,13 +93,27 @@ body {
   backdrop-filter: blur(18px);
   font-size: 20px;
   font-weight: bold;
+  display: flex;
+  justify-content: center; /* وسط‌چین کردن */
+}
+
+.chat-header-inner {
+  display: flex;
+  align-items: center;
+}
+
+.logo-text {
+  color: var(--text-color); /* رنگ متن لوگو */
 }
 
 .chat-main {
   padding: 28px;
   flex: 1;
-  overflow-y: auto;
+  overflow-y: auto; /* اسکرول عمودی */
   backdrop-filter: blur(8px);
+  display: flex;
+  flex-direction: column; /* چیدمان عمودی پیام‌ها */
+  align-items: center; /* وسط‌چین کردن محتوا */
 }
 
 /* ===== MESSAGES ===== */
@@ -101,21 +124,51 @@ body {
   margin-bottom: 18px;
   line-height: 1.75;
   animation: fadeIn 0.25s ease;
-  white-space: pre-wrap;
+  white-space: pre-wrap; /* حفظ فاصله‌ها و خطوط */
+  width: 100%; /* گرفتن عرض کامل پنل پیام */
+  box-sizing: border-box;
 }
 
-.user {
-  background: var(--user-msg);
+.message.user {
+  background: linear-gradient(135deg, #2c65ff, #1933aa); /* گرادیان آبی برای پیام کاربر */
   color: white;
-  margin-left: auto;
-  border-bottom-left-radius: 6px;
+  margin-left: auto; /* چسباندن به راست */
+  border-bottom-left-radius: 6px; /* گرد کردن گوشه پایین سمت چپ */
+  text-align: right; /* راست‌چین کردن متن پیام کاربر */
 }
 
-.assistant {
-  background: var(--assistant-msg);
-  border: 1px solid var(--border);
-  margin-right: auto;
-  border-bottom-right-radius: 6px;
+.message.assistant {
+  background: var(--panel); /* پس‌زمینه پنل برای پیام دستیار */
+  border: var(--assistant-msg-border); /* حاشیه برای پیام دستیار */
+  margin-right: auto; /* چسباندن به چپ */
+  border-bottom-right-radius: 6px; /* گرد کردن گوشه پایین سمت راست */
+  text-align: left; /* چپ‌چین کردن متن پیام دستیار */
+}
+
+/* Typing animation */
+.typing {
+  display: inline-block;
+  width: 50px;
+  height: 10px;
+  margin-right: 10px; /* فاصله از متن */
+}
+
+.typing span {
+  display: inline-block;
+  background-color: var(--text-color);
+  border-radius: 50%;
+  width: 8px;
+  height: 8px;
+  margin-right: 5px;
+  animation: typing 1.4s infinite ease-out;
+}
+
+.typing span:nth-child(1) { animation-delay: -0.32s; }
+.typing span:nth-child(2) { animation-delay: -0.16s; }
+
+@keyframes typing {
+  0%, 80%, 100% { transform: scale(0); }
+  40% { transform: scale(1.2); }
 }
 
 /* ===== INPUT BAR ===== */
@@ -124,35 +177,70 @@ body {
   background: var(--panel);
   backdrop-filter: blur(14px);
   border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: center; /* وسط‌چین کردن نوار ورودی */
 }
 
 .input-wrapper {
   display: flex;
   gap: 12px;
+  max-width: 720px; /* هم‌عرض پیام‌ها */
+  width: 100%;
 }
 
-input {
+.input-wrapper input {
   flex: 1;
   padding: 16px;
   border-radius: 12px;
   border: 1px solid var(--border);
   background: var(--input-bg);
-  color: var(--text);
+  color: var(--text-color);
+  outline: none; /* حذف خط دور */
 }
 
-button {
+.input-wrapper input::placeholder {
+  color: var(--placeholder-color);
+}
+
+.input-wrapper button {
   padding: 16px 20px;
   border-radius: 12px;
   border: none;
-  background: var(--btn);
+  background: var(--button-bg); /* استفاده از رنگ دکمه جدید */
   color: white;
   cursor: pointer;
   font-size: 15px;
+  transition: background-color 0.3s ease;
 }
-button:hover {
-  background: var(--btn-hover);
+.input-wrapper button:hover {
+  background: var(--button-hover-bg); /* هاور دکمه */
 }
 
+/* ===== ADDED STYLES FOR BETTER LOOK ===== */
+/* Fading effect for scrollbar */
+.chat-main::-webkit-scrollbar {
+  width: 8px;
+}
+.chat-main::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+}
+.chat-main::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+.chat-main::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Optional: Adjust centering if needed */
+.chat-main-content {
+  width: 100%;
+  max-width: 720px; /* Match message width */
+  margin: 0 auto; /* Center the content wrapper */
+}
+
+/* Animation for messages */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: translateY(0); }
