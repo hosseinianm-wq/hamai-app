@@ -1,4 +1,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+* {
+  box-sizing: border-box;
+}
+
+body {
+  direction: rtl;
+}
 
 /* ===== COLORS ===== */
 :root {
@@ -46,6 +53,11 @@ html, body {
   min-height: 100vh; /* استفاده از min-height برای انعطاف‌پذیری */
 }
 
+.chat-root {
+  display: flex;
+  flex-direction: row-reverse;
+  min-height: 100vh;
+}
 /* SIDEBAR */
 .chat-sidebar {
   width: 260px;
@@ -142,7 +154,7 @@ html, body {
   border: var(--assistant-msg-border); /* حاشیه برای پیام دستیار */
   margin-right: auto; /* چسباندن به چپ */
   border-bottom-right-radius: 6px; /* گرد کردن گوشه پایین سمت راست */
-  text-align: left; /* چپ‌چین کردن متن پیام دستیار */
+  text-align: right; /* چپ‌چین کردن متن پیام دستیار */
 }
 
 /* Typing animation */
@@ -170,6 +182,11 @@ html, body {
   0%, 80%, 100% { transform: scale(0); }
   40% { transform: scale(1.2); }
 }
+html, body {
+  direction: rtl;
+  text-align: right;
+}
+
 
 /* ===== INPUT BAR ===== */
 .chat-footer {
