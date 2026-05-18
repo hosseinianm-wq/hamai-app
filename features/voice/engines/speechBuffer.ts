@@ -1,4 +1,4 @@
-import voiceEvents from "@features/voice/events/voiceEvents";
+import voiceEvents from "../events/voiceEvents";
 
 let buffer = "";
 

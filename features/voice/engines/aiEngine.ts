@@ -1,4 +1,5 @@
-import voiceEvents from "@features/voice/events/voiceEvents";
+import voiceEvents from "../events/voiceEvents";
+
 
 voiceEvents.on("STT_RESULT", async (text: string) => {
   console.log("[AI] received:", text)

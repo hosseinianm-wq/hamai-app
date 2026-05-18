@@ -1,6 +1,6 @@
 // features/voice/engines/aiStreamEngine.ts
 
-import voiceEvents from "@features/voice/events/voiceEvents";
+import voiceEvents from "../events/voiceEvents";
 
 class AIStreamEngine {
 

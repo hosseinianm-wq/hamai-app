@@ -18,7 +18,24 @@ export async function POST(req: NextRequest) {
     const reply = await askHamAIBale(fullMessages);
 
     const updatedHistory = [...fullMessages, { role: 'assistant' as const, content: reply }];
-    saveBaleMemory(chatId, updatedHistory);
+    type Message = {
+  role: "user" | "assistant" | "system";
+  content: any;
+};
+
+const mergedHistory: Message[] = [
+  ...fullMessages.map((m) => ({
+    role: m.role as Message["role"],
+    content: m.content,
+  })),
+  { role: "assistant", content: reply },
+];
+
+saveBaleMemory(chatId, mergedHistory);
+
+
+saveBaleMemory(chatId, mergedHistory);
+
 
     await sendToBale(chatId, reply);
 

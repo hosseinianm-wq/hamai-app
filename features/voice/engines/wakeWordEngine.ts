@@ -1,5 +1,5 @@
 // features/voice/engines/wakeWordEngine.ts
-import voiceEvents from "@features/voice/events/voiceEvents";
+import voiceEvents from "../events/voiceEvents";
 import interruptEngine from "./interruptEngine";
 
 class WakeWordEngine {

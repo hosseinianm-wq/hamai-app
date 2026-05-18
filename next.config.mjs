@@ -1,11 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  typescript: {
-    ignoreBuildErrors: true,   // این خط ارور منسوخ شدن را نادیده می‌گیرد
-  },
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
+  reactStrictMode: true,
+  assetPrefix: process.env.NODE_ENV === "production"
+    ? "https://hamai.app"
+    : "",
 };
 
-module.exports = nextConfig;
+export default nextConfig;

@@ -1,5 +1,5 @@
 // features/voice/engines/interruptEngine.ts
-import voiceEvents from "@features/voice/events/voiceEvents";
+import voiceEvents from "../events/voiceEvents";
 
 class InterruptEngine {
   private active = false;
