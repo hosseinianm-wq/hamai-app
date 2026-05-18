@@ -3,5 +3,8 @@ main = ".open-next/worker.js"
 compatibility_date = "2026-05-10"
 compatibility_flags = ["nodejs_compat"]
 
+# ⬇ این بخش حیاتی که جا افتاده بود ⬇
+assets = { directory = ".open-next/assets", binding = "ASSETS" }
+
 [build]
 command = "npx opennextjs-cloudflare build"

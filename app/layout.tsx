@@ -1,5 +1,7 @@
 import "./globals.css"
 import type { Metadata, Viewport } from "next"
+// این تنظیم به Next.js می‌گوید هرگز این صفحه را کش نکند
+export const revalidate = 0;
 
 export const metadata: Metadata = {
   title: "HamAI - دستیار هوشمند",

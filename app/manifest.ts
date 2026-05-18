@@ -1,5 +1,5 @@
 import { MetadataRoute } from "next"
-
+export const dynamic = "force-static";  // <-- این خط را اضافه کن
 export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "HamAI",
