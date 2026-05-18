@@ -17,7 +17,7 @@ export async function askHamAI(messages: any[]) {
       "Authorization": `Bearer ${apiKey}`,
     },
     body: JSON.stringify({
-      model: "llama-3.1-70b-versatile", // مدل پیشنهادی Groq
+      model: "llama3-8b-8192",
       messages,
       stream: false,
     }),
