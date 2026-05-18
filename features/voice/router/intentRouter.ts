@@ -1,5 +1,5 @@
 // features/voice/router/intentRouter.ts
-import voiceEvents from "@features/voice/events/voiceEvents";
+import voiceEvents from "../events/voiceEvents";
 
 function detectIntent(text: string) {
   const t = text.toLowerCase();

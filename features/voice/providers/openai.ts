@@ -1,4 +1,4 @@
-import voiceEvents from "@features/voice/events/voiceEvents";
+import voiceEvents from "../events/voiceEvents";
 
 export async function runOpenAI(prompt: string) {
   const res = await fetch("https://api.openai.com/v1/chat/completions", {
