@@ -1,25 +1,43 @@
 // core/ai/hamaiClient.ts
+
+const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
+
 export async function askHamAI(messages: any[]) {
-console.log("API endpoint:", "https://openrouter.ai/api/v1/chat/completions")
-    const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+  const apiKey = process.env.GROQ_API_KEY
+
+  if (!apiKey) {
+    console.error("Missing GROQ_API_KEY")
+    return "Server misconfigured: GROQ_API_KEY not found"
+  }
+
+  const res = await fetch(GROQ_URL, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`,
+      "Authorization": `Bearer ${apiKey}`,
     },
     body: JSON.stringify({
-      model: "openai/gpt-4o-mini",
+      model: "llama-3.1-70b-versatile", // مدل پیشنهادی Groq
       messages,
-      stream: false
+      stream: false,
     }),
   })
 
+  if (!res.ok) {
+    const text = await res.text()
+    console.error("Groq API error:", res.status, text)
+    return `AI error: ${res.status}`
+  }
+
   const data = await res.json()
 
-  return data.choices?.[0]?.message?.content ?? "No response"
+  return (
+    data.choices?.[0]?.message?.content ??
+    "Groq returned no response"
+  )
 }
 
-// ساده برای پیام تکی
+// Simple wrapper
 export async function askHamai(message: string): Promise<string> {
   return askHamAI([
     {
@@ -29,8 +47,7 @@ export async function askHamai(message: string): Promise<string> {
   ])
 }
 
-
-// نسخه streaming برای UI
+// Fake streaming for UI animation
 export async function* askHamaiStream(message: string) {
   const response = await askHamai(message)
 
@@ -38,6 +55,6 @@ export async function* askHamaiStream(message: string) {
 
   for (const word of words) {
     yield word + " "
-    await new Promise((r) => setTimeout(r, 20))
+    await new Promise((r) => setTimeout(r, 12))
   }
 }

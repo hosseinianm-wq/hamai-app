@@ -1,20 +1,23 @@
+export const runtime = "edge"
+
 import { askHamaiStream } from "@/core/ai/hamaiClient"
 
 export async function POST(req: Request) {
   try {
     const { message } = await req.json()
 
-    const aiStream = await askHamaiStream(message)
-
+    const aiStream = askHamaiStream(message)
     const encoder = new TextEncoder()
 
     const stream = new ReadableStream({
       async start(controller) {
-        for await (const chunk of aiStream) {
-          controller.enqueue(encoder.encode(chunk))
+        try {
+          for await (const chunk of aiStream) {
+            controller.enqueue(encoder.encode(chunk))
+          }
+        } finally {
+          controller.close()
         }
-
-        controller.close()
       },
     })
 
@@ -25,7 +28,7 @@ export async function POST(req: Request) {
       },
     })
 
-  } catch (error) {
+  } catch (error: any) {
     console.error("Chat API error:", error)
 
     return new Response("Error", {
