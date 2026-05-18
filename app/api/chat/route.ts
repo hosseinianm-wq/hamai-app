@@ -1,5 +1,3 @@
-export const runtime = "edge"
-
 import { askHamaiStream } from "@/core/ai/hamaiClient"
 
 export async function POST(req: Request) {
