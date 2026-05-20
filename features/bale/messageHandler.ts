@@ -37,6 +37,15 @@ export async function handleMessage(
     resolveCommand(
       message?.text || ""
     );;
+    if (command) {
+
+  return {
+    command,
+    type: "command",
+    content:
+      message?.text || "",
+  };
+}
 
   await trackUser(
     message,
