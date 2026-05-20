@@ -8,16 +8,37 @@ export async function extractUrlContent(
 
   try {
 
-    const response = await fetch(url);
+    const response =
+      await fetch(url);
 
-    const html = await response.text();
+    const html =
+      await response.text();
 
-    const $ = cheerio.load(html);
+    const $ =
+      cheerio.load(html);
 
     const text = $("body")
       .text()
       .replace(/\s+/g, " ")
       .trim();
+
+    if (
+      text.includes("pageProps") ||
+      text.includes("scriptLoader") ||
+      text.includes("Too Many Requests") ||
+      text.includes("Access Denied") ||
+      text.includes("enable JavaScript") ||
+      text.length < 200
+    ) {
+
+      console.log(
+        "[URL_REJECTED]"
+      );
+
+      return (
+        "محتوای قابل خواندن پیدا نشد."
+      );
+    }
 
     return text.slice(0, 12000);
 
@@ -28,6 +49,8 @@ export async function extractUrlContent(
       error
     );
 
-    return url;
+    return (
+      "خطا در خواندن لینک."
+    );
   }
 }
