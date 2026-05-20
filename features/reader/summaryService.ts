@@ -1,56 +1,44 @@
 ﻿// features/reader/summaryService.ts
-import OpenAI from "openai";
 
 export async function summarizeText(
   text: string
 ): Promise<string> {
 
-  console.log(
-    "[SUMMARY_INPUT]",
-    text.length
-  );
-
-  if (text.length < 100) {
-
-    console.log(
-      "[SUMMARY_SKIPPED]"
-    );
-
+  if (text.length < 400) {
     return text;
   }
 
-  const client = new OpenAI({
-    apiKey: process.env.GROQ_API_KEY,
-    baseURL: "https://api.groq.com/openai/v1",
-  });
-
-  console.log(
-    "[SUMMARY_CALLING_GROQ]"
+  const response = await fetch(
+    "https://api.groq.com/openai/v1/chat/completions",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization:
+          `Bearer ${process.env.GROQ_API_KEY}`,
+      },
+      body: JSON.stringify({
+        model: "llama-3.1-8b-instant",
+        messages: [
+          {
+            role: "system",
+            content:
+              "متن را به کوتاهترین شکل ممکن خلاصه کن. بازنویسی نکن. فقط نکات اصلی را در حداکثر ۲ جمله فارسی بگو.", 
+          },
+          {
+            role: "user",
+            content: text,
+          },
+        ],
+        temperature: 0.3,
+      }),
+    }
   );
 
-  const response =
-    await client.chat.completions.create({
-      model: "llama-3.1-8b-instant",
-      messages: [
-        {
-          role: "system",
-          content:
-            "متن را کوتاه، روان، فارسی و حداکثر در ۳ جمله خلاصه کن. فقط نکات اصلی را بگو.",
-        },
-        {
-          role: "user",
-          content: text,
-        },
-      ],
-      temperature: 0.3,
-    });
-
-  console.log(
-    "[SUMMARY_DONE]"
-  );
+  const data = await response.json();
 
   return (
-    response.choices?.[0]?.message?.content ||
+    data?.choices?.[0]?.message?.content ||
     text
   );
 }
