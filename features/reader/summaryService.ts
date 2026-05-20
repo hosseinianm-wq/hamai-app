@@ -2,11 +2,6 @@
 
 import OpenAI from "openai";
 
-const client = new OpenAI({
-  apiKey: process.env.GROQ_API_KEY,
-  baseURL: "https://api.groq.com/openai/v1",
-});
-
 export async function summarizeText(
   text: string
 ): Promise<string> {
@@ -14,6 +9,11 @@ export async function summarizeText(
   if (text.length < 400) {
     return text;
   }
+
+  const client = new OpenAI({
+    apiKey: process.env.GROQ_API_KEY,
+    baseURL: "https://api.groq.com/openai/v1",
+  });
 
   const response =
     await client.chat.completions.create({
