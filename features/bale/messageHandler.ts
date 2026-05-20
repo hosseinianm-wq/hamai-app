@@ -33,6 +33,11 @@ export async function handleMessage(
   const type =
     detectMessageType(message);
 
+  const command =
+    resolveCommand(
+      message?.text || ""
+    );;
+
   await trackUser(
     message,
     type
@@ -94,6 +99,7 @@ export async function handleMessage(
   clearUserMode(chatId);
 
   return {
+    command,
     type,
     content,
     mode,
