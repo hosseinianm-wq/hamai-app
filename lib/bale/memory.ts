@@ -1,14 +1,32 @@
-type Message = {
-  role: 'user' | 'assistant' | 'system';
-  content: string;
-};
+﻿// lib/bale/memory.ts
 
-const baleMemory = new Map<number, Message[]>();
+const userModes =
+  new Map<number, string>();
 
-export function getBaleMemory(chatId: number): Message[] {
-  return baleMemory.get(chatId) || [];
+export function setUserMode(
+  chatId: number,
+  mode: string
+) {
+
+  userModes.set(
+    chatId,
+    mode
+  );
 }
 
-export function saveBaleMemory(chatId: number, messages: Message[]) {
-  baleMemory.set(chatId, messages.slice(-10));
+export function getUserMode(
+  chatId: number
+) {
+
+  return (
+    userModes.get(chatId) ||
+    "text"
+  );
+}
+
+export function clearUserMode(
+  chatId: number
+) {
+
+  userModes.delete(chatId);
 }

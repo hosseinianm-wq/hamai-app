@@ -6,8 +6,10 @@ export async function sendVoiceMessage(
 ) {
 
   console.log(
-    "[voice placeholder]",
+    "[VOICE_PLACEHOLDER]",
     chatId,
     text
   );
+
+  return null;
 }

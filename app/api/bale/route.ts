@@ -1,37 +1,49 @@
 ﻿// app/api/bale/route.ts
 
-import { NextRequest } from "next/server";
+import { NextRequest }
+from "next/server";
 
-import { handleMessage } from "@/features/bale/messageHandler";
-import { buildReaderReply } from "@/features/bale/replyBuilder";
+import { handleMessage }
+from "@/features/bale/messageHandler";
 
-import { sendToBale } from "@/lib/bale/sendToBale";
+import { routeResponse }
+from "@/features/bale/responseRouter";
 
-export async function POST(req: NextRequest) {
+import { sendToBale }
+from "@/lib/bale/sendToBale";
+
+export async function POST(
+  req: NextRequest
+) {
 
   try {
 
-    const body = await req.json();
+    const body =
+      await req.json();
 
-    const message = body?.message;
+    const message =
+      body?.message;
 
     if (!message) {
+
       return Response.json({
         ok: false,
       });
     }
 
-    const result = await handleMessage(
-      message
-    );
+    const payload =
+      await handleMessage(
+        message
+      );
 
-    const reply = buildReaderReply(
-      result.result
-    );
+    const routed =
+      await routeResponse(
+        payload
+      );
 
     await sendToBale(
       message.chat.id,
-      reply
+      routed.reply
     );
 
     return Response.json({

@@ -1,32 +1,74 @@
 ﻿// features/bale/messageHandler.ts
 
-import { detectMessageType } from "./typeDetector";
-import { extractContent } from "./contentExtractor";
+import { resolveCommand } from "@/features/commands/commandBus";
 
-import { processReaderText } from "@/features/reader/readerService";
-import { extractUrlContent } from "@/features/reader/urlReader";
+import { detectMessageType }
+from "./typeDetector";
+
+import { extractContent }
+from "./contentExtractor";
+
+import {
+  getUserMode,
+  setUserMode,
+  clearUserMode,
+} from "@/lib/bale/memory";
+
+import { processReaderText }
+from "@/features/reader/readerService";
+
+import { extractUrlContent }
+from "@/features/reader/urlReader";
+
+import { trackUser }
+from "@/features/analytics/trackUser";
 
 export async function handleMessage(
   message: any
 ) {
 
-  const type = detectMessageType(
-    message
-  );
+  const chatId =
+    message?.chat?.id;
 
-  const content = await extractContent(
+  const type =
+    detectMessageType(message);
+
+  await trackUser(
     message,
     type
   );
 
-  if (!content) {
+  const content =
+    await extractContent(
+      message,
+      type
+    );
+
+  if (!content && type !== "voice") {
 
     return {
       type,
       content: "",
       result: {
         speech:
-          "متنی برای خواندن پیدا نکردم.",
+          "متنی پیدا نکردم.",
+      },
+    };
+  }
+
+  if (type === "voice") {
+
+    setUserMode(
+      chatId,
+      "voice"
+    );
+
+    return {
+      type,
+      content,
+      result: {
+        speech:
+          "حالت ویس فعال شد. متن بعدی را بفرست.",
       },
     };
   }
@@ -36,16 +78,25 @@ export async function handleMessage(
   if (type === "url") {
 
     finalText =
-      await extractUrlContent(content);
+      await extractUrlContent(
+        content
+      );
   }
 
-  const result = await processReaderText(
-    finalText
-  );
+  const result =
+    await processReaderText(
+      finalText
+    );
+
+  const mode =
+    getUserMode(chatId);
+
+  clearUserMode(chatId);
 
   return {
     type,
     content,
+    mode,
     result,
   };
 }

@@ -1,14 +1,28 @@
+﻿// features/bale/typeDetector.ts
+
 export type MessageType =
   | "text"
   | "url"
   | "command"
-  | "reply";
+  | "reply"
+  | "voice";
 
-export function detectMessageType(message: any): MessageType {
-  const text = message?.text?.trim() || "";
+export function detectMessageType(
+  message: any
+): MessageType {
+
+  const text =
+    message?.text?.trim() || "";
 
   if (message?.reply_to_message) {
     return "reply";
+  }
+
+  if (
+    text === "/voice" ||
+    text === "ویس"
+  ) {
+    return "voice";
   }
 
   if (
