@@ -3,6 +3,9 @@
 import { NextRequest }
 from "next/server";
 
+import { routeResponse }
+from "@/features/bale/responseRouter";
+
 import { sendToBale }
 from "@/lib/bale/sendToBale";
 
@@ -16,9 +19,16 @@ export async function POST(
   const message =
     body?.message;
 
+  const response =
+    await routeResponse({
+      command: {
+        name: "stats",
+      },
+    });
+
   await sendToBale(
     message.chat.id,
-    "ROUTE_OK"
+    response.reply
   );
 
   return Response.json({
