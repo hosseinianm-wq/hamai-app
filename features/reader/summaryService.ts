@@ -22,14 +22,14 @@ export async function summarizeText(
         {
           role: "system",
           content:
-            "متن‌ها را کوتاه، روان و فارسی خلاصه کن.",
+            "متن را کوتاه روان فارسی و حداکثر در ۳ جمله خلاصه کن. فقط نکات اصلی را بگو.",
         },
         {
           role: "user",
           content: text,
         },
       ],
-      temperature: 0.4,
+      temperature: 0.3,
     });
 
   return (
