@@ -4,6 +4,7 @@ import { detectMessageType } from "./typeDetector";
 import { extractContent } from "./contentExtractor";
 
 import { processReaderText } from "@/features/reader/readerService";
+import { extractUrlContent } from "@/features/reader/urlReader";
 
 export async function handleMessage(
   message: any
@@ -30,8 +31,16 @@ export async function handleMessage(
     };
   }
 
+  let finalText = content;
+
+  if (type === "url") {
+
+    finalText =
+      await extractUrlContent(content);
+  }
+
   const result = await processReaderText(
-    content
+    finalText
   );
 
   return {
