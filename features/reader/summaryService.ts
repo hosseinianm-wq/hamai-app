@@ -10,7 +10,7 @@ export async function summarizeText(
     text.length
   );
 
-  if (text.length < 400) {
+  if (text.length < 100) {
 
     console.log(
       "[SUMMARY_SKIPPED]"
