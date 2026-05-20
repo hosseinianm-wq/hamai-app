@@ -1,11 +1,24 @@
-﻿import { runReaderEngine } from "@/core/engines/reader.engine";
+﻿// features/reader/readerService.ts
 
-export async function processReaderText(text: string) {
+import { runReaderEngine } from "@/core/engines/reader.engine";
 
-  const result = await runReaderEngine(text);
+import { summarizeText } from "./summaryService";
+
+export async function processReaderText(
+  text: string
+) {
+
+  const summary = await summarizeText(
+    text
+  );
+
+  const result = await runReaderEngine(
+    summary
+  );
 
   return {
     original: text,
+    summary,
     speech: result.speechReady,
   };
 }
