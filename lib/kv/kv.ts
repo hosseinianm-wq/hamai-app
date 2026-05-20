@@ -1,18 +1,37 @@
 ﻿// lib/kv/kv.ts
 
-declare const HAMAI_KV: {
-  get(key: string): Promise<string | null>;
-  put(
-    key: string,
-    value: string
-  ): Promise<void>;
-};
+type KV =
+  | {
+      get:
+        (key: string)
+        => Promise<any>;
+
+      put:
+        (
+          key: string,
+          value: string
+        ) => Promise<void>;
+    }
+  | undefined;
+
+const kv: KV =
+  (globalThis as any)
+    .HAMAI_KV;
 
 export async function kvGet(
   key: string
 ) {
 
-  return await HAMAI_KV.get(key);
+  if (!kv) {
+
+    console.log(
+      "[KV_DISABLED]"
+    );
+
+    return null;
+  }
+
+  return await kv.get(key);
 }
 
 export async function kvSet(
@@ -20,7 +39,16 @@ export async function kvSet(
   value: string
 ) {
 
-  await HAMAI_KV.put(
+  if (!kv) {
+
+    console.log(
+      "[KV_DISABLED]"
+    );
+
+    return;
+  }
+
+  await kv.put(
     key,
     value
   );
